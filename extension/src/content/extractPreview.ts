@@ -24,17 +24,60 @@ function scan(): PreviewItem[] {
   return results;
 }
 
+// Mutation observer handle so we can disconnect when extension context goes away
+let stopped = false;
+let observer: MutationObserver | null = null;
+
+function stop() {
+  if (stopped) return;
+  stopped = true;
+  observer?.disconnect();
+  observer = null;
+}
+
+function handleRuntimeError(error: unknown) {
+  const message = (error as Error | undefined)?.message ?? '';
+  if (message.includes('Extension context invalidated')) {
+    stop();
+  }
+}
+
 // Send list to background for aggregation
 function dispatch() {
+  if (stopped) return;
+  const runtime = chrome?.runtime;
+  if (!runtime?.id) {
+    stop();
+    return;
+  }
+
   const items = scan();
   if (!items.length) return;
-  chrome.runtime.sendMessage({ type: MessageKind.PUSH_ITEMS, items });
+
+  try {
+    const maybePromise = runtime.sendMessage({ type: MessageKind.PUSH_ITEMS, items }) as unknown;
+    if (maybePromise && typeof (maybePromise as Promise<unknown>).catch === 'function') {
+      (maybePromise as Promise<unknown>).catch(handleRuntimeError);
+    }
+  } catch (error) {
+    handleRuntimeError(error);
+  }
 }
 
 // Initial & mutation observer (lightweight)
 dispatch();
-const mo = new MutationObserver(() => {
-  // debounced via background; send every structural change
-  dispatch();
-});
-mo.observe(document.body, { subtree: true, childList: true });
+
+if (document.body) {
+  observer = new MutationObserver(() => {
+    // debounced via background; send every structural change
+    dispatch();
+  });
+  observer.observe(document.body, { subtree: true, childList: true });
+} else {
+  window.addEventListener('DOMContentLoaded', () => {
+    if (stopped || observer) return;
+    observer = new MutationObserver(() => dispatch());
+    observer.observe(document.body!, { subtree: true, childList: true });
+    dispatch();
+  });
+}

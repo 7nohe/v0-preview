@@ -1,33 +1,36 @@
 import { defineManifest } from '@crxjs/vite-plugin';
 
+declare const process: { env?: Record<string, string | undefined> };
+
+const hostPermissions = ['https://*.vusercontent.net/*'];
+
+if (process.env?.NODE_ENV === 'development') {
+  hostPermissions.push('http://localhost:*/*');
+}
+
 export default defineManifest({
   manifest_version: 3,
   name: 'v0 Preview/Demo URL Opener',
   version: '0.1.0',
   description: 'Extract and open preview/demo URLs from v0.app chat.',
   permissions: ['storage', 'tabs'],
-  // Narrow host permissions (only need vusercontent assets; can refine further later)
-  host_permissions: ['https://*.vusercontent.net/*'],
+  // Narrow host permissions (only need vusercontent assets; localhost added dynamically during dev)
+  host_permissions: hostPermissions,
   action: {
     default_popup: 'popup.html',
     default_title: 'Open Preview/Demo URLs'
   },
   background: {
-    service_worker: 'background.js',
+    service_worker: 'src/background/serviceWorker.ts',
     type: 'module'
   },
   content_scripts: [
     {
       matches: ['https://v0.app/*'],
-      js: ['content.js'],
+      js: ['src/content/extractPreview.ts'],
       run_at: 'document_idle'
     }
   ],
-  icons: {
-    '16': 'icons/icon16.png',
-    '32': 'icons/icon32.png',
-    '128': 'icons/icon128.png'
-  },
   options_page: 'options.html',
   commands: {
     'open-latest-preview': {
