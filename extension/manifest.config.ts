@@ -13,12 +13,24 @@ export default defineManifest({
   name: 'v0 Preview/Demo URL Opener',
   version: '0.1.0',
   description: 'Extract and open preview/demo URLs from v0.app chat.',
+  icons: {
+    16: 'icons/icon-16.png',
+    32: 'icons/icon-32.png',
+    48: 'icons/icon-48.png',
+    128: 'icons/icon-128.png',
+    256: 'icons/icon-256.png',
+    512: 'icons/icon-512.png'
+  },
   permissions: ['storage', 'tabs'],
   // Narrow host permissions (only need vusercontent assets; localhost added dynamically during dev)
   host_permissions: hostPermissions,
   action: {
     default_popup: 'popup.html',
-    default_title: 'Open Preview/Demo URLs'
+    default_title: 'Open Preview/Demo URLs',
+    default_icon: {
+      16: 'icons/icon-16.png',
+      32: 'icons/icon-32.png'
+    }
   },
   background: {
     service_worker: 'src/background/serviceWorker.ts',

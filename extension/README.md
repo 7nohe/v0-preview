@@ -7,6 +7,7 @@ Early scaffolding. Implementation will follow TDD per `specs/001-v0-app-chat/tas
 - `build`: production bundle
 - `lint`: ESLint
 - `test`: Vitest run all tests
+- `icons`: resize the base icon into the Chrome extension sizes
 
 ## Architecture (planned)
 - content script extracts preview iframe origins
@@ -16,3 +17,7 @@ Early scaffolding. Implementation will follow TDD per `specs/001-v0-app-chat/tas
 ## Next
 1. Write failing tests (Phase 3.2)
 2. Implement core modules to satisfy tests
+
+## Assets
+- `icon.png`: high-resolution source
+- `icons/`: generated Chrome extension icons (run `npm run icons` to refresh)
