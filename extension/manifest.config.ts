@@ -11,7 +11,7 @@ if (process.env?.NODE_ENV === 'development') {
 export default defineManifest({
   manifest_version: 3,
   name: 'v0 Preview/Demo URL Opener',
-  version: '0.1.0',
+  version: '0.1.3',
   description: 'Extract and open preview/demo URLs from v0.app chat.',
   icons: {
     16: 'icons/icon-16.png',
