@@ -41,3 +41,15 @@ Early scaffolding. Implementation will follow TDD per `specs/001-v0-app-chat/tas
 1. In the `extension/` directory, run `npm run release:bundle`. If needed, specify the `RELEASE_VERSION` environment variable in the `vX.Y.Z` format.
 2. A file named `v0-preview-extension-v<version>.zip` will be generated in the `release/` directory. Upload this as a GitHub release asset.
 3. You may delete the generated files in the `release/` directory when no longer needed (they are git-ignored).
+
+## Install from GitHub Release
+
+### Download
+1. Go to the latest release page and download the attached `v0-preview-extension-vX.Y.Z.zip` file.
+2. Extract the downloaded zip file. You will get a built folder containing `manifest.json` (note the extraction path).
+
+### Load into Chrome
+1. Open Chrome and navigate to `chrome://extensions/` in the address bar.
+2. Enable **Developer mode** in the top right corner.
+3. Click **Load unpacked** and select the folder you just extracted.
+4. The extension will appear in the list. To update, extract the new zip and overwrite the folder, or use **Load unpacked** again to reload.

@@ -8,6 +8,7 @@ const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
 const projectRoot = path.resolve(__dirname, '..');
 const packageJsonPath = path.join(projectRoot, 'package.json');
+const manifestPath = path.join(projectRoot, 'manifest.config.ts');
 
 function exec(command, args, options = {}) {
   const child = spawn(command, args, {
@@ -71,6 +72,17 @@ async function updatePackageJson(version) {
   await writeFile(packageJsonPath, formatted, 'utf-8');
 }
 
+async function updateManifest(version) {
+  const raw = await readFile(manifestPath, 'utf-8');
+  const updated = raw.replace(/version:\s*'[^']*'/, `version: '${version}'`);
+
+  if (updated === raw) {
+    throw new Error('Failed to update manifest version. Expected to find version property.');
+  }
+
+  await writeFile(manifestPath, updated, 'utf-8');
+}
+
 async function main() {
   try {
     await ensureCleanGitState();
@@ -84,6 +96,9 @@ async function main() {
 
     console.log(`Updating package.json version to ${newVersion}...`);
     await updatePackageJson(newVersion);
+
+    console.log('Updating manifest version...');
+    await updateManifest(newVersion);
 
     console.log('Installing dependencies to refresh lockfile...');
     await exec('npm', ['install']);
