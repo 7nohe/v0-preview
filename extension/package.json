@@ -10,7 +10,9 @@
     "test": "vitest run",
     "test:watch": "vitest",
     "test:perf": "vitest run tests/performance --reporter verbose",
-    "icons": "node scripts/generate-icons.mjs"
+    "icons": "node scripts/generate-icons.mjs",
+    "release:bundle": "node scripts/package-release.mjs",
+    "release:prepare": "node scripts/create-release-tag.mjs"
   },
   "dependencies": {
     "react": "^18.3.1",
